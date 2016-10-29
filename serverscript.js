@@ -1,6 +1,6 @@
 // Retreive data from the database
 function getData() {
-    var queryResult = db.Execute('SELECT * FROM hungrykids');
+    var queryResult = db.Execute('SELECT * FROM hungrykids where edatetime >= CAST(CURRENT_TIMESTAMP AS DATE) order by edatetime');
     var rows = JSON.parse(queryResult);
     if (rows.length > 0 && typeof rows[0].Error != 'undefined') {
         return '{"status":"noTable"}';
@@ -16,7 +16,7 @@ function createTable() {
     var row = JSON.parse(queryResult);
 
     if (row.length > 0 && typeof row[0].Error != 'undefined') {
-        db.Execute('CREATE TABLE hungrykids(id INTEGER PRIMARY KEY IDENTITY(1,1), foodname nvarchar(500),startdate datetime, enddate datetime, room nvarchar(50),event nvarchar(200),eventurl nvarchar(500),description nvarchar(4000));');
+        db.Execute('CREATE TABLE hungrykids(id INTEGER PRIMARY KEY IDENTITY(1,1), foodname nvarchar(500),edatetime datetime,lat nvarchar(200),lon nvarchar(200),location nvarchar(50),eventurl nvarchar(500),description nvarchar(4000));');
         result = '{"status":"tableCreated"}';
     } else
         result = '{"status":"tableExist"}';
@@ -26,7 +26,7 @@ function createTable() {
 
 // Insert into the database
 function insert() {
-       db.Execute('INSERT INTO hungrykids VALUES(@foodname,@startdate,@enddate,@room,@event,@eventurl,@description)');
+       db.Execute('INSERT INTO hungrykids VALUES(@foodname,@edatetime,@lat,@lon,@location,@eventurl,@description)');
        return getData();
 }
 
