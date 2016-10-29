@@ -1,5 +1,23 @@
+<script type="text/ng-template" id="loading.html">
+    <widget-row>
+        <widget-cell>
+            <div class="pDetails">
+                Loading..
+            </div>
+        </widget-cell>
+    </widget-row>
+</script>
+
 <!-- Primary template that will get shown when widget loads -->
-<script type="text/ng-template" id="hungrykidsMain.html"> 
+<script type="text/ng-template" id="hungrykidsMain.html">
+	<widget-row clickable ng-click="addFood()">
+		<widget-cell fill>
+			<span class="itemName">Add food!</span>
+		</widget-cell>
+		<widget-cell>
+			<widget-icon name="angle-right"></widget-icon>
+		</widget-cell>
+	</widget-row>
 	<widget-row ng-repeat="item in items" clickable ng-click="showDetails(item)">
 		<widget-cell fill>
 			<span class="itemName">{{item.title}}</span>
@@ -11,6 +29,66 @@
 			<widget-icon name="angle-right"></widget-icon>
 		</widget-cell>
 	</widget-row>
+</script>
+
+<script type="text/ng-template" id="loading.html">
+    <widget-row>
+        <widget-cell>
+            <div class="pDetails">
+                Loading..
+            </div>
+        </widget-cell>
+    </widget-row>
+</script>
+
+<!-- This template gets shown when user clicks one of the items in the list -->
+<script type="text/ng-template" id="addFood.html"> 
+    <!-- DATABASE EXAMPLE -->
+    <div class="collapseMe">
+        <widget-row>
+            <widget-cell>
+                <h2>Add Food!</h2>
+            </widget-cell>
+        </widget-row>
+        <div ng-if="dbData.value.status">
+            <widget-row>
+                <widget-cell>
+                    <div class="pDetails" ng-if="dbData.value.status=='noTable'">
+                        Table does not exist,
+                        <a ng-click="createTable()">create table</a>.
+                    </div>
+                </widget-cell>
+            </widget-row>
+        </div>
+        <div ng-if="!dbData.value.status">
+            <widget-row>
+                <widget-cell>
+                    <form class="form-inline" ng-submit="insertData()">
+                        <div class="input-group" style="width: 100%;">
+                            <input type="text" class="form-control" ng-model="insertValue.foodName" placeholder="What food?" />
+                            <input type="date" class="form-control" ng-model="insertValue.startDate" placeholder="Start Date" />
+                            <input type="date" class="form-control" ng-model="insertValue.endDate" placeholder="End Date" />
+                            <input type="text" class="form-control" ng-model="insertValue.room" placeholder="What food?" />
+                            <input type="text" class="form-control" ng-model="insertValue.event" placeholder="What food?" />
+                            <input type="text" class="form-control" ng-model="insertValue.eventUrl" placeholder="What food?" />
+                            <input type="text" class="form-control" ng-model="insertValue.description" placeholder="What food?" />
+                            <span class="input-group-btn" style="overflow:hidden;">
+                                <button class="btn btn-primary glyphicon glyphicon glyphicon-ok btn" type="submit" style="margin-top: -1px;"></button>
+                            </span>
+                        </div>
+                    </form>
+                </widget-cell>
+            </widget-row>
+
+            <widget-row ng-repeat="item in dbData.value">
+                <widget-cell>
+                    <div class="pDetails">Id: {{item.id}}</div>
+                    <div class="pDetails">UserId: {{item.userId}}</div>
+                    <div class="pDetails">Value: {{item.value}}</div>
+                </widget-cell>
+            </widget-row>
+        </div>
+    </div>
 </script>
 
 <!-- This template gets shown when user clicks one of the items in the list -->
