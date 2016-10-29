@@ -1,3 +1,33 @@
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+
+                <h2>Map view:</h2>
+            <div id="mapid"></div>
+<script>
+    var mymap = L.map('mapid').setView([43.47061295, -80.5449578682451], 13);
+    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpandmbXliNDBjZWd2M2x6bDk3c2ZtOTkifQ._QA7i5Mpkd_m30IGElHziw', {
+        maxZoom: 18,
+        attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+            '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+            'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+        id: 'mapbox.streets'
+    }).addTo(mymap);
+    var popup = L.popup();
+
+    function onMapClick(e) {
+        popup
+            .setLatLng(e.latlng)
+            .setContent("You clicked the map at " + e.latlng.toString())
+            .openOn(mymap);
+    }
+    mymap.on('click', onMapClick);
+
+    function addMarker(item) {
+        L.marker([item.lat, item.lon]).addTo(mymap)
+            .bindPopup("<b>" + String(item.foodname) + " @ " + String(item.location) + "</b><br/>Description: " + String(item.description + "<br/> Url: <a href='" + String(item.eventurl) + "' >" + String(item.eventurl) + "</a>"));
+        return [""]
+    }
+</script>
 <script type="text/ng-template" id="loading.html">
     <widget-row>
         <widget-cell>
@@ -10,25 +40,25 @@
 
 <!-- Primary template that will get shown when widget loads -->
 <script type="text/ng-template" id="hungrykidsMain.html">
-	<widget-row clickable ng-click="addFood()">
-		<widget-cell fill>
-			<span class="itemName">Add food!</span>
-		</widget-cell>
-		<widget-cell>
-			<widget-icon name="angle-right"></widget-icon>
-		</widget-cell>
-	</widget-row>
-	<widget-row ng-repeat="item in items" clickable ng-click="showDetails(item)">
-		<widget-cell fill>
-			<span class="itemName">{{item.title}}</span>
-			<span ng-repeat= "tag in item.tags" class="label label-success">
+    <widget-row clickable ng-click="addFood()">
+        <widget-cell fill>
+            <span class="itemName">Add food!</span>
+        </widget-cell>
+        <widget-cell>
+            <widget-icon name="angle-right"></widget-icon>
+        </widget-cell>
+    </widget-row>
+    <widget-row ng-repeat="item in items" clickable ng-click="showDetails(item)">
+        <widget-cell fill>
+            <span class="itemName">{{item.title}}</span>
+            <span ng-repeat="tag in item.tags" class="label label-success">
 				{{tag}}
 			</span>
-		</widget-cell>
-		<widget-cell>
-			<widget-icon name="angle-right"></widget-icon>
-		</widget-cell>
-	</widget-row>
+        </widget-cell>
+        <widget-cell>
+            <widget-icon name="angle-right"></widget-icon>
+        </widget-cell>
+    </widget-row>
 </script>
 
 <script type="text/ng-template" id="loading.html">
@@ -42,12 +72,12 @@
 </script>
 
 <!-- This template gets shown when user clicks one of the items in the list -->
-<script type="text/ng-template" id="addFood.html"> 
+<script type="text/ng-template" id="addFood.html">
     <!-- DATABASE EXAMPLE -->
     <div class="collapseMe">
         <widget-row>
             <widget-cell>
-                <h2>Add Food!</h2>
+                <h2>Add food</h2>
             </widget-cell>
         </widget-row>
         <div ng-if="dbData.value.status">
@@ -65,12 +95,10 @@
                 <widget-cell>
                     <form class="form-inline" ng-submit="insertData()">
                         <div class="input-group" style="width: 100%;">
-                            <input type="text" class="form-control" ng-model="insertValue.foodName" placeholder="What food?" />
-                            <input type="date" class="form-control" ng-model="insertValue.startDate" placeholder="Start Date" />
-                            <input type="date" class="form-control" ng-model="insertValue.endDate" placeholder="End Date" />
-                            <input type="text" class="form-control" ng-model="insertValue.room" placeholder="Room?" />
-                            <input type="text" class="form-control" ng-model="insertValue.event" placeholder="Event?" />
-                            <input type="text" class="form-control" ng-model="insertValue.eventUrl" placeholder="Url?" />
+                            <input type="text" class="form-control" ng-model="insertValue.foodname" placeholder="What food?" />
+                            <input type="text" class="form-control" ng-model="insertValue.edatetime" placeholder="Date & time" />
+                            <input type="text" class="form-control" ng-model="insertValue.location" placeholder="Location?" />
+                            <input type="text" class="form-control" ng-model="insertValue.eventurl" placeholder="Url?" />
                             <input type="text" class="form-control" ng-model="insertValue.description" placeholder="Description?" />
                             <span class="input-group-btn" style="overflow:hidden;">
                                 <button class="btn btn-primary glyphicon glyphicon glyphicon-ok btn" type="submit" style="margin-top: -1px;"></button>
@@ -80,15 +108,17 @@
                 </widget-cell>
             </widget-row>
 
-            <widget-row ng-repeat="item in dbData.value">
+        <widget-row>
+            <widget-cell>
+                <h2>All the free food!</h2>
+            </widget-cell>
+        </widget-row>
+            <widget-row ng-init="addMarker(item)" ng-repeat="item in dbData.value">
                 <widget-cell>
-                    <div class="pDetails">foodname: {{item.foodname}}</div>
-                        <div class="pDetails">startdate: {{item.startdate}}</div>
-                        <div class="pDetails">enddate: {{item.enddate}}</div>
-                        <div class="pDetails">room: {{item.room}}</div>
-                        <div class="pDetails">event: {{item.event}}</div>
-                        <div class="pDetails">eventurl: {{item.eventurl}}</div>
-                        <div class="pDetails">description: {{item.description}}</div>
+                    <div class="pDetails">The food: <b>{{item.foodname}}</b></div>
+                    <div class="pDetails">Location: <b>{{item.location}}</b></div>
+                    <div class="pDetails">Description: <b>{{item.description}}</b></div>
+                    <div class="pDetails">Url: <b>{{item.eventurl}}</b></div>
                 </widget-cell>
             </widget-row>
         </div>
@@ -96,11 +126,18 @@
 </script>
 
 <!-- This template gets shown when user clicks one of the items in the list -->
-<script type="text/ng-template" id="hungrykidsDetails.html"> 
-	<!-- 'wr' and 'wc' are short for 'widget-row' and 'widget-cell' -->
-	<wr>
-		<wc><h2>{{detailsItem.title}}</h2></wc>
-	</wr>
-	<wr><wc><span ng-repeat= "tag in detailsItem.tags" class="label label-success">{{tag}}</span></wc></wr>
-	<wr><wc><div class="pDetails">{{detailsItem.details}}</div></wc></wr>
+<script type="text/ng-template" id="hungrykidsDetails.html">
+    <!-- 'wr' and 'wc' are short for 'widget-row' and 'widget-cell' -->
+    <wr>
+        <wc>
+            <h2>{{detailsItem.title}}</h2></wc>
+    </wr>
+    <wr>
+        <wc><span ng-repeat="tag in detailsItem.tags" class="label label-success">{{tag}}</span></wc>
+    </wr>
+    <wr>
+        <wc>
+            <div class="pDetails">{{detailsItem.details}}</div>
+        </wc>
+    </wr>
 </script>
