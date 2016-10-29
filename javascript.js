@@ -67,11 +67,23 @@ angular.module('portalApp')
     // Handle form submit in the database test example
     $scope.insertData = function () {
             $scope.portalHelpers.invokeServerFunction('insert', {
-                value: $scope.insertValue.value
+                foodname: $scope.insertValue.foodName,
+                startdate: $scope.insertValue.startDate,
+                enddate: $scope.insertValue.endDate,
+                room: $scope.insertValue.room,
+                event: $scope.insertValue.event,
+                eventurl: $scope.insertValue.eventUrl,
+                description: $scope.insertValue.description
             }).then(function (result) {
                 $scope.dbData.value = result;
             });
-            $scope.insertValue.value = "";
+            $scope.insertValue.foodName = "";
+            $scope.insertValue.startDate = "";
+            $scope.insertValue.endDate = "";
+            $scope.insertValue.room = "";
+            $scope.insertValue.event = "";
+            $scope.insertValue.eventUrl = "";
+            $scope.insertValue.description = "";
     };
 	
 	// This function gets called when user clicks an item in the list
