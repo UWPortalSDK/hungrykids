@@ -26,7 +26,7 @@ function createTable() {
 
 // Insert into the database
 function insert() {
-       db.Execute('INSERT INTO sampleTable VALUES(@foodname,@startdate,@enddate,@room,@event,@eventurl,@description)');
+       db.Execute('INSERT INTO hungrykids VALUES(@foodname,@startdate,@enddate,@room,@event,@eventurl,@description)');
        return getData();
 }
 
