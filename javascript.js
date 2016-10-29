@@ -31,26 +31,41 @@ angular.module('portalApp')
         });
     }
     
+    $scope.lat="";
+    $scope.lon="";
+    $scope.addMarker = addMarker;
+    
     // Handle form submit in the database test example
     $scope.insertData = function () {
-            $scope.portalHelpers.invokeServerFunction('insert', {
-                foodname: $scope.insertValue.foodName,
-                startdate: $scope.insertValue.startDate,
-                enddate: $scope.insertValue.endDate,
-                room: $scope.insertValue.room,
-                event: $scope.insertValue.event,
-                eventurl: $scope.insertValue.eventUrl,
+        var dataaa;
+        $http.get("http://nominatim.openstreetmap.org/search?q=" + encodeURI($scope.insertValue.location) +"&country=Canada&city=Waterloo&state=Ontario&bounded=1&limit=1&viewboxlbrt=%20-80.565384,43.483367,%20-80.515517,43.458451&format=json&polygon=0&addressdetails=1")
+        .then(function(response) {
+             console.log(response.data[0].lat);
+             $scope.lat=response.data[0].lat;
+             console.log(response.data[0].lon);
+             $scope.lon=response.data[0].lon;
+            dataaa={
+                foodname: $scope.insertValue.foodname,
+                edatetime: $scope.insertValue.edatetime,
+                lat: $scope.lat,
+                lon: $scope.lon,
+                location: $scope.insertValue.location,
+                eventurl: $scope.insertValue.eventurl,
                 description: $scope.insertValue.description
-            }).then(function (result) {
+            };
+             console.log(dataaa);
+            $scope.portalHelpers.invokeServerFunction('insert', dataaa).then(function (result) {
                 $scope.dbData.value = result;
             });
-            $scope.insertValue.foodName = "";
-            $scope.insertValue.startDate = "";
-            $scope.insertValue.endDate = "";
-            $scope.insertValue.room = "";
-            $scope.insertValue.event = "";
-            $scope.insertValue.eventUrl = "";
+            $scope.insertValue.foodname = "";
+            $scope.insertValue.edatetime = "";
+            $scope.insertValue.location = "";
+            $scope.insertValue.eventurl = "";
             $scope.insertValue.description = "";
+        });
+        	
+         
+            
     };
 	
 	// This function gets called when user clicks an item in the list
